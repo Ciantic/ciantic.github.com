@@ -3,9 +3,46 @@
 <head>
 	<meta charset="UTF-8">
 	<title>VertMax W7</title>
+	<link rel="stylesheet" href="../styles/application.css" />
+	<style>
+
+		#content {
+			position: absolute;
+			width: 40em;
+			height: 20em;
+			left: 50%;
+			top: 50%;
+			margin-left: -20em;
+			margin-top: -10em;
+		}
+		
+		.contentWrapper {
+			padding: 10px;
+		}
+		
+		/* Position actions */
+		.actions {
+			bottom: 10px;
+			right: 10px;
+			position: absolute;
+		}
+		
+	</style>
 </head>
 <body>
-	<h1>Chrome Vertical Maximizer for <em>Windows 7</em></h1>
-	<p>This is <a href="">Chrome</a> extension that vertical maximizes new windows.</p>
+	<div id="content" class="dialog">	
+		<div class="contentWrapper">
+			<h1>VertMax W7</h1>
+			<p><a href="http://www.google.com/chrome/">Chrome</a> extension and plugin that <em>vertical maximizes</em> new windows. This extension uses the Windows 7 native Aero Snap feature.</p>
+			<p>Same effect can be achieved under Windows 7 by either <em>double clicking</em> on the top resizer or by keyboard shortcut <em>Win+Shift-Up</em>.</p>
+			<p><small>I decided not to upload this to <em>extension gallery</em> just yet because NPAPI plugin extensions requires manual approval.</small></p>
+			<ul class="actions rightside">
+				<li class="default"><a href="chrome-vertmax.crx" class="install">Install the extension</a></li>
+				<li><a href="http://github.com/Ciantic/chrome-vertmax/blob/master/LICENSE.rst#readme" class="install" title="FreeBSD License">License</a></li>
+				<li><a href="http://github.com/Ciantic/chrome-vertmax/" class="install" title="Source code repository">Fork me on GitHub</a></li>
+			</ul>
+		</div>
+	</div>
+	
 </body>
 </html>
