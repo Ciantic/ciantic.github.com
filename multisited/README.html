@@ -23,11 +23,11 @@ get_request_site_id(request)
 get_request_media_root(request)
 get_request_media_url(request)
 </pre>
-<p>And at least a another backend method (if not altered completly see below):</p>
+<p>And at least a another auth backend method (if not altered completly see below):</p>
 <pre class="literal-block">
-get_user_request(user_id, request=None)
+get_request_user(user_id, request)
 </pre>
-<p>And replace the auth middleware's (<tt class="docutils literal">django.contrib.auth.get_user()</tt>) auth backend <tt class="docutils literal">backend.get_user(user_id)</tt> call with <tt class="docutils literal">backend.get_user_request(user_id, request)</tt> if backend implements it (the backwards compatible way).</p>
+<p>And replace the auth middleware's (<tt class="docutils literal">django.contrib.auth.get_user()</tt>) auth backend <tt class="docutils literal">backend.get_user(user_id)</tt> call with <tt class="docutils literal">backend.get_request_user(user_id, request)</tt> if backend implements it (the backwards compatible way).</p>
 </div>
 <div class="section" id="using-middleware">
 <h2>2. Using middleware</h2>
