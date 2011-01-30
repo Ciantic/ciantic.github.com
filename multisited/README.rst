@@ -20,7 +20,7 @@ And at least a another backend method (if not altered completly see below)::
 
     get_user_request(user_id, request=None) 
 
-And replace the auth middleware's (``django.contrib.auth.get_user()``) auth backend ```get_user()`` call with ``get_user_request()`` if backend implements it (the backwards compatible way).
+And replace the auth middleware's (``django.contrib.auth.get_user()``) auth backend ``backend.get_user(user_id)`` call with ``backend.get_user_request(user_id, request)`` if backend implements it (the backwards compatible way).
 
 2. Using middleware
 ===================
