@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
+<title></title>
+<link rel="stylesheet" href="css/styles.css" type="text/css" />
+</head>
+<body>
+<div class="document">
+
+
+<div class="section" id="multisite-approach-for-django">
+<h1>Multisite approach for django</h1>
+<p>In order to implement Django instance that could serve multiple sites per instance with different users and permissions per site. I propose either of the two approaches to fix Django.</p>
+<div class="section" id="using-methods-get-request-request">
+<h2>1. Using methods <tt class="docutils literal"><span class="pre">get_request_*(request)</span></tt></h2>
+<p>It would be <strong>required</strong> to implement following:</p>
+<pre class="literal-block">
+get_request_site_id(request)
+get_request_media_root(request)
+get_request_media_url(request)
+</pre>
+<p>And at least a another backend method (if not altered completly see below):</p>
+<pre class="literal-block">
+get_user_request(user_id, request=None)
+</pre>
+<p>And replace the auth middleware's (<tt class="docutils literal">django.contrib.auth.get_user()</tt>) auth backend <tt class="docutils literal">`get_user()</tt> call with <tt class="docutils literal">get_user_request()</tt> if backend implements it (the backwards compatible way).</p>
+</div>
+<div class="section" id="using-middleware">
+<h2>2. Using middleware</h2>
+<p>It is tedious to type <tt class="docutils literal"><span class="pre">get_request_*(request)</span></tt> calls after all one needs them almost <em>always in all</em> views if apps were to use sites.</p>
+<p>So simply add the <tt class="docutils literal">site_id</tt>, <tt class="docutils literal">media_root</tt>, <tt class="docutils literal">media_url</tt> to the request object in middleware (just like the <tt class="docutils literal">request.urlconf</tt> is currently added). This is handy since it only needs one cache lookup, whereas methods require fetch from cache most of the time. Behind this middleware there had to be method just like in first proposal, but user would not need to type them all the time.</p>
+<p>The auth middleware still needs to be fixed as in 1. proposal.</p>
+</div>
+<div class="section" id="altering-the-auth-backend-role-optional">
+<h2>Altering the auth backend role. (optional)</h2>
+<p>I think this module level <tt class="docutils literal">django.contrib.auth.get_user()</tt>, <tt class="docutils literal">login()</tt> is currently wrong way to do things in the first place (and they are confusingly named for their behavior, see below), it cuts out the authentication backend all together.</p>
+<p>It would be simpler to imagine this login / get_user as following:</p>
+<ul>
+<li><p class="first">Saving the request's user to request.session</p>
+<p>(currently handled by the module level <tt class="docutils literal">login()</tt>)</p>
+</li>
+<li><p class="first">Loading user from request's session (all requests after login)</p>
+<p>(currently handled by the module level <tt class="docutils literal">get_user()</tt>, and <tt class="docutils literal">backend.get_user()</tt>)</p>
+</li>
+</ul>
+<p>There is no simple way one could define own behavior for this saving and loading the user to request.session in auth backends. It seems like the thing would be handy to be easily replacaple in auth backend.</p>
+<p>If there were a way to define saving and loading user one could do cool stuff like:</p>
+<ol class="arabic simple">
+<li>per site login system (saving site_id to session during saving and fetching it from session during loading)</li>
+<li>during login caching of user permissions to session (no need to hit database after login for permissions!)</li>
+</ol>
+<p>One could define the saving and loading of user to session in authentication backend with simple methods like:</p>
+<pre class="literal-block">
+authbackend.save(request, user) -&gt; bool
+authbackend.load(request) -&gt; user object
+</pre>
+<p>Then for backwards compatibility we could do (since removing <tt class="docutils literal">login</tt> is out of question or renaming to save and get/load):</p>
+<ul class="simple">
+<li><tt class="docutils literal">django.contrib.auth.login</tt> would become the caller for backend.save(request, user) of course the login() could still use the backend_session_key and user_id there</li>
+<li><tt class="docutils literal">django.contrib.auth.get_user</tt> would become the caller for backend.load(request)</li>
+</ul>
+</div>
+</div>
+</div>
+</body>
+</html>
