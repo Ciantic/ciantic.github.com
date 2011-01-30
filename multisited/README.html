@@ -40,17 +40,17 @@ get_user_request(user_id, request=None)
 <p>I think this module level <tt class="docutils literal">django.contrib.auth.get_user()</tt>, <tt class="docutils literal">login()</tt> is currently wrong way to do things in the first place (and they are confusingly named for their behavior, see below), it cuts out the authentication backend all together.</p>
 <p>It would be simpler to imagine this login / get_user as following:</p>
 <ul>
-<li><p class="first">Saving the request's user to request.session</p>
+<li><p class="first">Saving the user to <tt class="docutils literal">request.session</tt></p>
 <p>(currently handled by the module level <tt class="docutils literal">login()</tt>)</p>
 </li>
-<li><p class="first">Loading user from request's session (all requests after login)</p>
+<li><p class="first">Loading user from <tt class="docutils literal">request.session</tt> (all requests after login)</p>
 <p>(currently handled by the module level <tt class="docutils literal">get_user()</tt>, and <tt class="docutils literal">backend.get_user()</tt>)</p>
 </li>
 </ul>
-<p>There is no simple way one could define own behavior for this saving and loading the user to request.session in auth backends. It seems like the thing would be handy to be easily replacaple in auth backend.</p>
+<p>There is no simple way one could define own behavior for this saving and loading the user to <tt class="docutils literal">request.session</tt> in auth backends. It seems like these two should be overridable in auth backend.</p>
 <p>If there were a way to define saving and loading user one could do cool stuff like:</p>
 <ol class="arabic simple">
-<li>per site login system (saving site_id to session during saving and fetching it from session during loading)</li>
+<li>per site login system (saving site_id of request to session during saving and fetching it from session during loading)</li>
 <li>during login caching of user permissions to session (no need to hit database after login for permissions!)</li>
 </ol>
 <p>One could define the saving and loading of user to session in authentication backend with simple methods like:</p>
@@ -58,11 +58,12 @@ get_user_request(user_id, request=None)
 authbackend.save(request, user) -&gt; bool
 authbackend.load(request) -&gt; user object
 </pre>
-<p>Then for backwards compatibility we could do (since removing <tt class="docutils literal">login</tt> is out of question or renaming to save and get/load):</p>
+<p>Then for backwards compatibility we could do:</p>
 <ul class="simple">
-<li><tt class="docutils literal">django.contrib.auth.login</tt> would become the caller for backend.save(request, user) of course the login() could still use the backend_session_key and user_id there</li>
-<li><tt class="docutils literal">django.contrib.auth.get_user</tt> would become the caller for backend.load(request)</li>
+<li><tt class="docutils literal">django.contrib.auth.login</tt> would become the caller for <tt class="docutils literal">backend.save(request, user)</tt> of course the <tt class="docutils literal">login()</tt> could still use the backend_session_key and user_id there</li>
+<li><tt class="docutils literal">django.contrib.auth.get_user</tt> would become the caller for <tt class="docutils literal">backend.load(request)</tt></li>
 </ul>
+<p>Later on they could be renamed by their <em>actual role</em>, like to <tt class="docutils literal">save_to_request</tt> and <tt class="docutils literal">load_from_request</tt> or something like that. (<em>Save to request</em> is a bit misleading and <em>save to session</em> is too restraining for the auth backend (auth backend needs the request object))</p>
 </div>
 </div>
 </div>

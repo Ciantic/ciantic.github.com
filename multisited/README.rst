@@ -38,19 +38,19 @@ I think this module level ``django.contrib.auth.get_user()``, ``login()`` is cur
 
 It would be simpler to imagine this login / get_user as following: 
 
-- Saving the request's user to request.session 
+- Saving the user to ``request.session``
 
   (currently handled by the module level ``login()``) 
   
-- Loading user from request's session (all requests after login) 
+- Loading user from ``request.session`` (all requests after login) 
 
   (currently handled by the module level ``get_user()``, and ``backend.get_user()``)
 
-There is no simple way one could define own behavior for this saving and loading the user to request.session in auth backends. It seems like the thing would be handy to be easily replacaple in auth backend. 
+There is no simple way one could define own behavior for this saving and loading the user to ``request.session`` in auth backends. It seems like these two should be overridable in auth backend. 
 
 If there were a way to define saving and loading user one could do cool stuff like: 
     
-1. per site login system (saving site_id to session during saving and fetching it from session during loading) 
+1. per site login system (saving site_id of request to session during saving and fetching it from session during loading) 
 2. during login caching of user permissions to session (no need to hit database after login for permissions!) 
     
 One could define the saving and loading of user to session in authentication backend with simple methods like::
@@ -58,7 +58,9 @@ One could define the saving and loading of user to session in authentication bac
     authbackend.save(request, user) -> bool 
     authbackend.load(request) -> user object 
 
-Then for backwards compatibility we could do (since removing ``login`` is out of question or renaming to save and get/load): 
+Then for backwards compatibility we could do: 
 
-- ``django.contrib.auth.login`` would become the caller for backend.save(request, user) of course the login() could still use the backend_session_key and user_id there
-- ``django.contrib.auth.get_user`` would become the caller for backend.load(request) 
+- ``django.contrib.auth.login`` would become the caller for ``backend.save(request, user)`` of course the ``login()`` could still use the backend_session_key and user_id there
+- ``django.contrib.auth.get_user`` would become the caller for ``backend.load(request)``
+
+Later on they could be renamed by their *actual role*, like to ``save_to_request`` and ``load_from_request`` or something like that. (*Save to request* is a bit misleading and *save to session* is too restraining for the auth backend (auth backend needs the request object))
