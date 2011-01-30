@@ -55,10 +55,11 @@ get_user_request(user_id, request=None)
 <li>during login caching of user permissions to session (no need to hit database after login for permissions!)</li>
 </ol>
 <p>One could define the saving and loading of user to session in authentication backend with simple methods like:</p>
-<pre class="literal-block">
-authbackend.save(request, user) -&gt; bool
-authbackend.load(request) -&gt; user object
-</pre>
+<ul class="simple">
+<li><tt class="docutils literal">backend.save_user(request, user)</tt> -&gt; bool</li>
+<li><tt class="docutils literal">backend.load_user(request)</tt> -&gt; user object</li>
+</ul>
+<p>(The loading could be named <tt class="docutils literal">get_user</tt> since it is like loading, but it clashes with old behavior that just gets the user from <tt class="docutils literal">user_id</tt>. Keeping the backwards compatibility is a good thing I suppose better name would be <tt class="docutils literal">backend.get_request_user(request)</tt>. Above I used word <em>load</em> for the sake of the consistency with my example.)</p>
 <p>Then for backwards compatibility we could do:</p>
 <ul class="simple">
 <li><tt class="docutils literal">django.contrib.auth.login</tt> would become the caller for <tt class="docutils literal">backend.save(request, user)</tt> of course the <tt class="docutils literal">login()</tt> could still use the backend_session_key and user_id there</li>

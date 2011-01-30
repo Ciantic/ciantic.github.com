@@ -55,14 +55,16 @@ If there were a way to define saving and loading user one could do cool stuff li
 1. per site login system (saving site_id of request to session during saving and fetching it from session during loading) 
 2. during login caching of user permissions to session (no need to hit database after login for permissions!) 
     
-One could define the saving and loading of user to session in authentication backend with simple methods like::
+One could define the saving and loading of user to session in authentication backend with simple methods like:
 
-    authbackend.save(request, user) -> bool 
-    authbackend.load(request) -> user object 
+- ``backend.save_user(request, user)`` -> bool 
+- ``backend.load_user(request)`` -> user object 
+
+(The loading could be named ``get_user`` since it is like loading, but it clashes with old behavior that just gets the user from ``user_id``. Keeping the backwards compatibility is a good thing I suppose better name would be ``backend.get_request_user(request)``. Above I used word *load* for the sake of the consistency with my example.)
 
 Then for backwards compatibility we could do: 
 
-- ``django.contrib.auth.login`` would become the caller for ``backend.save(request, user)`` of course the ``login()`` could still use the backend_session_key and user_id there
-- ``django.contrib.auth.get_user`` would become the caller for ``backend.load(request)``
+- ``django.contrib.auth.login`` would become the caller for ``backend.save_user(request, user)`` of course the ``login()`` could still use the backend_session_key and user_id there
+- ``django.contrib.auth.get_user`` would become the caller for ``backend.load_user(request)``
 
-Later on they could be renamed by their *actual role*, like to ``save_to_request`` and ``load_from_request`` or something like that. (*Save to request* is a bit misleading and *save to session* is too restraining for the auth backend (auth backend needs the request object))
+Later on these module level functions could be renamed by their *actual role*, like to ``save_to_request(request, user)`` and ``get_request_user(request)`` or something like that. (*Save to request* is a bit misleading and *save to session* is too restraining for the auth backend (auth backend needs the request object))
