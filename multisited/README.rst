@@ -25,9 +25,11 @@ And replace the auth middleware's (``django.contrib.auth.get_user()``) auth back
 
 It is tedious to type ``get_request_*(request)`` calls after all one needs them almost *always in all* views if apps were to use sites.
     
-So simply add the ``site_id``, ``media_root``, ``media_url`` to the request object in middleware (just like the ``request.urlconf`` is currently added). This is handy since it only needs one cache lookup, whereas methods require fetch from cache most of the time. Behind this middleware there had to be method just like in first proposal, but user would not need to type them all the time.
+So simply add the ``site_id``, ``media_root``, ``media_url`` to the request object in middleware (just like the ``request.urlconf`` is currently added). This is handy since it only needs one cache lookup, whereas methods require fetch from cache most of the time. Behind this middleware approach there has to be methods just like in first proposal, but user would not need to type them all the time.
 
-The auth middleware still needs to be fixed as in 1. proposal.
+(The auth middleware still needs to be fixed as in first proposal.)
+
+In either of the proposals the per site ``media_url`` and ``media_root`` could be accessed in templates just like before since template context processor would add them by request. Although these will considerably complicate things with model fields like ``FileField`` which now would require to take in the request object always.
 
 
 Altering the auth backend role. (optional)
