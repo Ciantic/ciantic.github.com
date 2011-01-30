@@ -4,6 +4,8 @@ Multisite approach for django
 
 In order to implement Django instance that could serve multiple sites per instance with different users and permissions per site. I propose either of the two approaches to fix Django.
 
+Additionally different sites should have possibility of having different media root and url, since these represent the site media. Here we assume that installed apps are same for each site, so the static url and root can be left as global.
+
 1. Using methods ``get_request_*(request)``
 ===========================================
 
@@ -23,7 +25,7 @@ And replace the auth middleware's (``django.contrib.auth.get_user()``) auth back
 2. Using middleware
 ===================
 
-It is tedious to type ``get_request_*(request)`` calls after all one needs them almost *always in all* views if apps were to use sites.
+It is tedious to type ``get_request_*(request)`` calls since one needs them almost *always* in *all* views if apps were to use sites.
     
 So simply add the ``site_id``, ``media_root``, ``media_url`` to the request object in middleware (just like the ``request.urlconf`` is currently added). This is handy since it only needs one cache lookup, whereas methods require fetch from cache most of the time. Behind this middleware approach there has to be methods just like in first proposal, but user would not need to type them all the time.
 

@@ -14,6 +14,7 @@
 <div class="section" id="multisite-approach-for-django">
 <h1>Multisite approach for django</h1>
 <p>In order to implement Django instance that could serve multiple sites per instance with different users and permissions per site. I propose either of the two approaches to fix Django.</p>
+<p>Additionally different sites should have possibility of having different media root and url, since these represent the site media. Here we assume that installed apps are same for each site, so the static url and root can be left as global.</p>
 <div class="section" id="using-methods-get-request-request">
 <h2>1. Using methods <tt class="docutils literal"><span class="pre">get_request_*(request)</span></tt></h2>
 <p>It would be <strong>required</strong> to implement following:</p>
@@ -30,7 +31,7 @@ get_user_request(user_id, request=None)
 </div>
 <div class="section" id="using-middleware">
 <h2>2. Using middleware</h2>
-<p>It is tedious to type <tt class="docutils literal"><span class="pre">get_request_*(request)</span></tt> calls after all one needs them almost <em>always in all</em> views if apps were to use sites.</p>
+<p>It is tedious to type <tt class="docutils literal"><span class="pre">get_request_*(request)</span></tt> calls since one needs them almost <em>always</em> in <em>all</em> views if apps were to use sites.</p>
 <p>So simply add the <tt class="docutils literal">site_id</tt>, <tt class="docutils literal">media_root</tt>, <tt class="docutils literal">media_url</tt> to the request object in middleware (just like the <tt class="docutils literal">request.urlconf</tt> is currently added). This is handy since it only needs one cache lookup, whereas methods require fetch from cache most of the time. Behind this middleware approach there has to be methods just like in first proposal, but user would not need to type them all the time.</p>
 <p>(The auth middleware still needs to be fixed as in first proposal.)</p>
 <p>In either of the proposals the per site <tt class="docutils literal">media_url</tt> and <tt class="docutils literal">media_root</tt> could be accessed in templates just like before since template context processor would add them by request. Although these will considerably complicate things with model fields like <tt class="docutils literal">FileField</tt> which now would require to take in the request object always.</p>
