@@ -15,12 +15,17 @@ It would be **required** to implement following::
     get_request_site_id(request) 
     get_request_media_root(request) 
     get_request_media_url(request)
+    
+Authentication and logins per site
+----------------------------------
 
-And at least a another auth backend method (if not altered completly see below)::
+In order to implement authentication per site there needs to be at least a another auth backend method (if not altered completly see below)::
 
     get_request_user(user_id, request) 
 
 And replace the auth middleware's (``django.contrib.auth.get_user()``) auth backend ``backend.get_user(user_id)`` call with ``backend.get_request_user(user_id, request)`` if backend implements it (the backwards compatible way).
+
+Also the ``AuthenticationForm`` and login view provided in Django are not reusable in per site authentication. It is not possible to simply subclass the ``AuthenticationForm`` since it is required to pass ``request`` object *or* site id to own auth backend in order to determine the site of request. So the calls to authentication backend should be in form of more general: ``backend.authenticate(request, username, password)`` or more restrictive ``backend.authenticate(site_id, username, password)`` to solve this problem. (Currently there is *no way* to access request object in ``django.contrib.auth.forms.AuthenticationForm.clean()`` even though there is attribute ``request``, it is ``None`` when calling Django calls ``clean()``)
 
 2. Using middleware
 ===================
