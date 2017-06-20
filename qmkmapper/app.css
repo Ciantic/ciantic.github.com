@@ -6730,4 +6730,5 @@ table.pt-table {
 
 /*# sourceMappingURL=blueprint.css.map */
 body {
-  box-sizing: border-box; }
+  box-sizing: border-box;
+  padding-top: 50px; }
