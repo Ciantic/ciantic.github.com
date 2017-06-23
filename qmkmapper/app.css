@@ -6729,6 +6729,12 @@ table.pt-table {
   background-color: #137cbd; }
 
 /*# sourceMappingURL=blueprint.css.map */
+/*
+ * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.
+ */
 body {
+  background: #f5f8fa;
   box-sizing: border-box;
-  padding-top: 50px; }
+  margin: 0;
+  padding: 20px;
+  padding-top: 70px; }
