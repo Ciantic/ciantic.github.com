@@ -1,4 +1,4 @@
-@charset "UTF-8";
+﻿@charset "UTF-8";
 /**
  * Copyright 2015 Palantir Technologies, Inc. All rights reserved.
  * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
@@ -6733,7 +6733,7 @@ table.pt-table {
  * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.
  */
 body {
-  background: #f5f8fa;
+  background: #293742;
   box-sizing: border-box;
   margin: 0;
   padding: 20px;
